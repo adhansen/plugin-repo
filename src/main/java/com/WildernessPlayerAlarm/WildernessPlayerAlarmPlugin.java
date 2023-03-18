@@ -50,9 +50,6 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 				if (player.getId() != self.getId() && (player.getLocalLocation().distanceTo(currentPosition) / 128) <= config.alarmRadius())
 				{
 					shouldAlarm = true;
-					if (config.ignoreUnskulled() && (player.getSkullIcon() == null)){
-						shouldAlarm = false;
-					}
 					if (config.ignoreClan() && player.isClanMember()){
 						shouldAlarm = false;
 					}
@@ -70,6 +67,16 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 			overlayManager.add(overlay);
 		}
 		if (!shouldAlarm)
+		{
+			overlayOn = false;
+			overlayManager.remove(overlay);
+		}
+	}
+
+	@Override
+	protected void shutDown() throws Exception
+	{
+		if (overlayOn)
 		{
 			overlayOn = false;
 			overlayManager.remove(overlay);

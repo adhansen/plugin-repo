@@ -23,21 +23,10 @@ public interface WildernessPlayerAlarmConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "ignoreUnskulled",
-			name = "Ignore unskulled",
-			description = "Do not alarm for unskulled players",
-			position = 1
-	)
-	default boolean ignoreUnskulled()
-	{
-		return false;
-	}
-
-	@ConfigItem(
 			keyName = "ignoreFriends",
 			name = "Ignore friends",
 			description = "Do not alarm for players on your friends list",
-			position = 2
+			position = 1
 	)
 	default boolean ignoreFriends()
 	{
@@ -48,7 +37,7 @@ public interface WildernessPlayerAlarmConfig extends Config
 			keyName = "ignoreClan",
 			name = "Ignore clan",
 			description = "Do not alarm for players in your clan",
-			position = 3
+			position = 2
 	)
 	default boolean ignoreClan()
 	{
@@ -60,7 +49,7 @@ public interface WildernessPlayerAlarmConfig extends Config
 			keyName = "flashColor",
 			name = "Flash color",
 			description = "Sets the color of the alarm flashes",
-			position = 4
+			position = 3
 	)
 	default Color flashColor()
 	{
