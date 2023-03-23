@@ -14,6 +14,7 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.client.Notifier;
 
 
 @Slf4j
@@ -33,6 +34,9 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 
 	@Inject
 	private AlarmOverlay overlay;
+
+	@Inject
+	private Notifier notifier;
 
 	private boolean overlayOn = false;
 
@@ -63,6 +67,9 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 
 		if (shouldAlarm && !overlayOn)
 		{
+			if (config.toggleNotification()){
+				notifier.notify("Player Spotted!");
+			}
 			overlayOn = true;
 			overlayManager.add(overlay);
 		}

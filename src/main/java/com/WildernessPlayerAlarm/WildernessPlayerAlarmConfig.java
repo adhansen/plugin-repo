@@ -55,4 +55,17 @@ public interface WildernessPlayerAlarmConfig extends Config
 	{
 		return new Color(255, 255, 0, 70);
 	}
+
+	@ConfigItem(
+			keyName = "toggleNotification",
+			name = "Desktop Notification",
+			description = "Receive a desktop notification when the alarm triggers",
+			position = 4
+	)
+	default boolean toggleNotification()
+	{
+		return false;
+	}
+
+
 }
