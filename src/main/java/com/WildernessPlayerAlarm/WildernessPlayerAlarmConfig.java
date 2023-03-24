@@ -23,10 +23,21 @@ public interface WildernessPlayerAlarmConfig extends Config
 	}
 
 	@ConfigItem(
+			keyName = "desktopNotification",
+			name = "Desktop notification",
+			description = "Receive a desktop notification when the alarm triggers",
+			position = 1
+	)
+	default boolean desktopNotification()
+	{
+		return false;
+	}
+
+	@ConfigItem(
 			keyName = "ignoreFriends",
 			name = "Ignore friends",
 			description = "Do not alarm for players on your friends list",
-			position = 1
+			position = 2
 	)
 	default boolean ignoreFriends()
 	{
@@ -37,7 +48,7 @@ public interface WildernessPlayerAlarmConfig extends Config
 			keyName = "ignoreClan",
 			name = "Ignore clan",
 			description = "Do not alarm for players in your clan",
-			position = 2
+			position = 3
 	)
 	default boolean ignoreClan()
 	{
@@ -49,23 +60,11 @@ public interface WildernessPlayerAlarmConfig extends Config
 			keyName = "flashColor",
 			name = "Flash color",
 			description = "Sets the color of the alarm flashes",
-			position = 3
+			position = 4
 	)
 	default Color flashColor()
 	{
 		return new Color(255, 255, 0, 70);
 	}
-
-	@ConfigItem(
-			keyName = "toggleNotification",
-			name = "Desktop Notification",
-			description = "Receive a desktop notification when the alarm triggers",
-			position = 4
-	)
-	default boolean toggleNotification()
-	{
-		return false;
-	}
-
 
 }

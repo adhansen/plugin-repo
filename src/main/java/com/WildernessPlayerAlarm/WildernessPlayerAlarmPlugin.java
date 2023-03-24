@@ -67,8 +67,8 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 
 		if (shouldAlarm && !overlayOn)
 		{
-			if (config.toggleNotification()){
-				notifier.notify("Player Spotted!");
+			if (config.desktopNotification()){
+				notifier.notify("Player spotted!");
 			}
 			overlayOn = true;
 			overlayManager.add(overlay);
