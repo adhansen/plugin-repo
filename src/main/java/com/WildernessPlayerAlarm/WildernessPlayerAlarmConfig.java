@@ -55,12 +55,20 @@ public interface WildernessPlayerAlarmConfig extends Config
 		return true;
 	}
 
+	@ConfigItem(
+			keyName = "combatCheck",
+			name = "Ignore outside combat bracket",
+			description = "Do not alarm for players outside your combat bracket",
+			position = 4
+	)
+	default boolean combatCheck() { return false; }
+
 	@Alpha
 	@ConfigItem(
 			keyName = "flashColor",
 			name = "Flash color",
 			description = "Sets the color of the alarm flashes",
-			position = 4
+			position = 5
 	)
 	default Color flashColor()
 	{
