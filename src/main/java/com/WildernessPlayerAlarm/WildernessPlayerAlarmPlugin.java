@@ -2,9 +2,7 @@ package com.WildernessPlayerAlarm;
 
 import com.google.inject.Provides;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
@@ -16,9 +14,8 @@ import net.runelite.client.Notifier;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
-import org.slf4j.Logger;
 
-
+@Slf4j
 @PluginDescriptor(
 	name = "Wilderness Player Alarm"
 )
@@ -40,8 +37,6 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 	private Notifier notifier;
 
 	private boolean overlayOn = false;
-
-	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(WildernessPlayerAlarmPlugin.class);
 
 	@Subscribe
 	public void onClientTick(ClientTick clientTick) {
