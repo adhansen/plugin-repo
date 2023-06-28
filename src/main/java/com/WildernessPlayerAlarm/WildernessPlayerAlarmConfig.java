@@ -55,12 +55,23 @@ public interface WildernessPlayerAlarmConfig extends Config
 		return true;
 	}
 
+	@ConfigItem(
+			keyName = "ignoreIgnored",
+			name = "Ignore 'ignore list' players",
+			description = "Do not alarm for players on your ignore list",
+			position = 4
+	)
+	default boolean ignoreIgnored()
+	{
+		return false;
+	}
+
 	@Alpha
 	@ConfigItem(
 			keyName = "flashColor",
 			name = "Flash color",
 			description = "Sets the color of the alarm flashes",
-			position = 4
+			position = 5
 	)
 	default Color flashColor()
 	{
