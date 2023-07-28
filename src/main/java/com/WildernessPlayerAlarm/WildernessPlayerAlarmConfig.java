@@ -55,12 +55,23 @@ public interface WildernessPlayerAlarmConfig extends Config
 		return true;
 	}
 
+	@ConfigItem(
+			keyName = "enableFlash",
+			name = "Enable flash",
+			description = "Enables screen flashing when a player is in range.",
+			position = 4
+	)
+	default boolean enableFlash()
+	{
+		return true;
+	}
+
 	@Alpha
 	@ConfigItem(
 			keyName = "flashColor",
 			name = "Flash color",
 			description = "Sets the color of the alarm flashes",
-			position = 4
+			position = 5
 	)
 	default Color flashColor()
 	{

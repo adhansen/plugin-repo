@@ -17,11 +17,7 @@ public class AlarmOverlay extends OverlayPanel
     {
         this.config = config;
         this.client = client;
-    }
 
-    @Override
-    public Dimension render(Graphics2D graphics)
-    {
         panelComponent.getChildren().clear();
         panelComponent.setPreferredSize(new Dimension(client.getCanvasWidth(), client.getCanvasHeight()));
         for(int i = 0; i < 100; ++i)
@@ -30,7 +26,12 @@ public class AlarmOverlay extends OverlayPanel
                     .left(" ")
                     .build());
         }
-        if (client.getGameCycle() % 20 >= 10)
+    }
+
+    @Override
+    public Dimension render(Graphics2D graphics)
+    {
+        if (config.enableFlash() && client.getGameCycle() % 20 >= 10)
         {
             panelComponent.setBackgroundColor(config.flashColor());
         } else
