@@ -89,4 +89,13 @@ public interface WildernessPlayerAlarmConfig extends Config
 		return new Color(255, 255, 0, 70);
 	}
 
+	@ConfigItem(
+			keyName = "silenceKey",
+			name = "Hotkey for silencing flash",
+			description = "Removes flash from screen until a new eligible player enters the alert range.",
+			position = 7
+	)
+	default Keybind silenceKey() {
+		return Keybind.NOT_SET;
+	}
 }
