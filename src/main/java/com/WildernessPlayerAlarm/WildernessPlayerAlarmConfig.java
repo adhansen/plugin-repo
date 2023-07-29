@@ -56,10 +56,21 @@ public interface WildernessPlayerAlarmConfig extends Config
 	}
 
 	@ConfigItem(
+			keyName = "ignorePlayersOutsideCombatRange",
+			name = "Ignore players outside combat range",
+			description = "Do not alarm for players who cannot attack you at the current wilderness level.",
+			position = 4
+	)
+	default boolean ignorePlayersOutsideCombatRange()
+	{
+		return false;
+	}
+
+	@ConfigItem(
 			keyName = "enableFlash",
 			name = "Enable flash",
 			description = "Enables screen flashing when a player is in range.",
-			position = 4
+			position = 5
 	)
 	default boolean enableFlash()
 	{
@@ -71,7 +82,7 @@ public interface WildernessPlayerAlarmConfig extends Config
 			keyName = "flashColor",
 			name = "Flash color",
 			description = "Sets the color of the alarm flashes",
-			position = 5
+			position = 6
 	)
 	default Color flashColor()
 	{

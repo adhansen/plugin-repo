@@ -46,6 +46,7 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 		boolean shouldAlarm = false;
 		Player self = client.getLocalPlayer();
 		LocalPoint currentPosition = client.getLocalPlayer().getLocalLocation();
+		WildernessCombatRange combatRange = WildernessCombatRange.getCurrentCombatRange(client);
 
 		if (client.getVarbitValue(Varbits.IN_WILDERNESS) == 1)
 		{
@@ -57,6 +58,9 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 						continue;
 					}
 					if (config.ignoreFriends() && player.isFriend()){
+						continue;
+					}
+					if (config.ignorePlayersOutsideCombatRange() && !combatRange.isOtherPlayerInCombatRange(player)) {
 						continue;
 					}
 					shouldAlarm = true;
