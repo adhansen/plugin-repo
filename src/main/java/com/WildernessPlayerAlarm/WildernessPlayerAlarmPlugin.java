@@ -49,20 +49,22 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 
 		if (client.getVarbitValue(Varbits.IN_WILDERNESS) == 1)
 		{
+			boolean foundDangerousPlayer = false;
 			for (Player player : players) {
 
 				if (player.getId() != self.getId() && (player.getLocalLocation().distanceTo(currentPosition) / 128) <= config.alarmRadius())
 				{
-					shouldAlarm = true;
 					if (config.ignoreClan() && player.isClanMember()){
-						shouldAlarm = false;
+						continue;
 					}
 					if (config.ignoreFriends() && player.isFriend()){
-						shouldAlarm = false;
+						continue;
 					}
+					foundDangerousPlayer = true;
 				}
 
 			}
+			shouldAlarm = foundDangerousPlayer;
 		}
 
 		if (shouldAlarm && !overlayOn)
