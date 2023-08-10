@@ -34,10 +34,20 @@ public interface WildernessPlayerAlarmConfig extends Config
 	}
 
 	@ConfigItem(
+			keyName = "pvpWorldAlerts",
+			name = "Pvp world alerts",
+			description = "Will alert you anywhere when in pvp worlds",
+			position = 2
+	)
+	default boolean pvpWorldAlerts() {
+		return false;
+	}
+
+	@ConfigItem(
 			keyName = "ignoreFriends",
 			name = "Ignore friends",
 			description = "Do not alarm for players on your friends list",
-			position = 2
+			position = 3
 	)
 	default boolean ignoreFriends()
 	{
@@ -48,7 +58,7 @@ public interface WildernessPlayerAlarmConfig extends Config
 			keyName = "ignoreClan",
 			name = "Ignore clan",
 			description = "Do not alarm for players in your clan",
-			position = 3
+			position = 4
 	)
 	default boolean ignoreClan()
 	{
@@ -60,7 +70,7 @@ public interface WildernessPlayerAlarmConfig extends Config
 			keyName = "flashColor",
 			name = "Flash color",
 			description = "Sets the color of the alarm flashes",
-			position = 4
+			position = 5
 	)
 	default Color flashColor()
 	{
