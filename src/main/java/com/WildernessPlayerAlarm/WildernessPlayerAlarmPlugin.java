@@ -48,7 +48,7 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 		Player self = client.getLocalPlayer();
 		LocalPoint currentPosition = client.getLocalPlayer().getLocalLocation();
 
-		if (client.getVarbitValue(Varbits.IN_WILDERNESS) == 1 || (config.pvpWorldAlerts() && isInPvp()))
+		if (client.getVarbitValue(Varbits.IN_WILDERNESS) == 1 || config.pvpWorldAlerts() && isInPvp())
 		{
 			boolean foundDangerousPlayer = false;
 			for (Player player : players) {
