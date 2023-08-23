@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.WorldType;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.events.ClientTick;
 import net.runelite.api.Player;
@@ -47,7 +48,7 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 		Player self = client.getLocalPlayer();
 		LocalPoint currentPosition = client.getLocalPlayer().getLocalLocation();
 
-		if (client.getVarbitValue(Varbits.IN_WILDERNESS) == 1)
+		if (client.getVarbitValue(Varbits.IN_WILDERNESS) == 1 || config.pvpWorldAlerts() && isInPvp())
 		{
 			boolean foundDangerousPlayer = false;
 			for (Player player : players) {
@@ -80,6 +81,11 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 			overlayOn = false;
 			overlayManager.remove(overlay);
 		}
+	}
+
+	private boolean isInPvp()
+	{
+		return WorldType.isPvpWorld(client.getWorldType()) && client.getVarbitValue(Varbits.PVP_SPEC_ORB) == 1;
 	}
 
 	@Override
