@@ -61,6 +61,9 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 					if (config.ignoreFriends() && player.isFriend()){
 						continue;
 					}
+					if (config.ignoreFriendsChat() && player.isFriend()){
+						continue;
+					}
 					foundDangerousPlayer = true;
 				}
 

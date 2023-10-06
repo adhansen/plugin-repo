@@ -55,10 +55,21 @@ public interface WildernessPlayerAlarmConfig extends Config
 	}
 
 	@ConfigItem(
+			keyName = "ignoreFriendsChat",
+			name = "Ignore friends chat members",
+			description = "Do not alarm for players in your friends chat.",
+			position = 4
+	)
+	default boolean ignoreFriendsChat()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 			keyName = "ignoreClan",
 			name = "Ignore clan",
 			description = "Do not alarm for players in your clan",
-			position = 4
+			position = 5
 	)
 	default boolean ignoreClan()
 	{
@@ -70,7 +81,7 @@ public interface WildernessPlayerAlarmConfig extends Config
 			keyName = "flashColor",
 			name = "Flash color",
 			description = "Sets the color of the alarm flashes",
-			position = 5
+			position = 6
 	)
 	default Color flashColor()
 	{
