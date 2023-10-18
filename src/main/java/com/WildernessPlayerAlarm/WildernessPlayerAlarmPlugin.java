@@ -2,6 +2,7 @@ package com.WildernessPlayerAlarm;
 
 import com.google.inject.Provides;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
@@ -43,44 +44,59 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 
 	@Subscribe
 	public void onClientTick(ClientTick clientTick) {
-		List<Player> players = client.getPlayers();
-		boolean shouldAlarm = false;
-		Player self = client.getLocalPlayer();
-		LocalPoint currentPosition = client.getLocalPlayer().getLocalLocation();
+		List<Player> dangerousPlayers = getPlayersInRange()
+				.stream()
+				.filter(this::shouldPlayerTriggerAlarm)
+				.collect(Collectors.toList());
 
-		if (client.getVarbitValue(Varbits.IN_WILDERNESS) == 1 || config.pvpWorldAlerts() && isInPvp())
-		{
-			boolean foundDangerousPlayer = false;
-			for (Player player : players) {
-
-				if (player.getId() != self.getId() && (player.getLocalLocation().distanceTo(currentPosition) / 128) <= config.alarmRadius())
-				{
-					if (config.ignoreClan() && player.isClanMember()){
-						continue;
-					}
-					if (config.ignoreFriends() && player.isFriend()){
-						continue;
-					}
-					foundDangerousPlayer = true;
-				}
-
-			}
-			shouldAlarm = foundDangerousPlayer;
-		}
-
+		boolean isInWilderness = client.getVarbitValue(Varbits.IN_WILDERNESS) == 1;
+		boolean isInDangerousPvpArea = config.pvpWorldAlerts() && isInPvp();
+		boolean shouldAlarm = (isInWilderness || isInDangerousPvpArea) && dangerousPlayers.size() > 0;
 		if (shouldAlarm && !overlayOn)
 		{
-			if (config.desktopNotification()){
+			if (config.desktopNotification())
+			{
 				notifier.notify("Player spotted!");
 			}
 			overlayOn = true;
 			overlayManager.add(overlay);
 		}
+
 		if (!shouldAlarm)
 		{
 			overlayOn = false;
 			overlayManager.remove(overlay);
 		}
+	}
+
+	private List<Player> getPlayersInRange()
+	{
+		LocalPoint currentPosition = client.getLocalPlayer().getLocalLocation();
+		return client.getPlayers()
+				.stream()
+				.filter(player -> (player.getLocalLocation().distanceTo(currentPosition) / 128) <= config.alarmRadius())
+				.collect(Collectors.toList());
+	}
+
+	private boolean shouldPlayerTriggerAlarm(Player player)
+	{
+		// Don't trigger for yourself
+		if (player.getId() == client.getLocalPlayer().getId())
+		{
+			return false;
+		}
+
+		// Don't trigger for clan members if option is selected
+		if (config.ignoreClan() && player.isClanMember()){
+			return false;
+		}
+
+		// Don't trigger for friends if option is selected
+		if (config.ignoreFriends() && player.isFriend()){
+			return false;
+		}
+
+		return true;
 	}
 
 	private boolean isInPvp()
