@@ -42,6 +42,8 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 
 	private boolean overlayOn = false;
 
+	private final HashMap<String, Integer> playerNameToTimeInRange = new HashMap<>();
+
 	@Subscribe
 	public void onClientTick(ClientTick clientTick) {
 		List<Player> dangerousPlayers = getPlayersInRange()
@@ -93,6 +95,11 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 
 		// Don't trigger for friends if option is selected
 		if (config.ignoreFriends() && player.isFriend()){
+			return false;
+		}
+
+		// Don't trigger for friends if option is selected
+		if (config.ignoreFriendsChat() && player.isFriendsChatMember()){
 			return false;
 		}
 
