@@ -65,16 +65,26 @@ public interface WildernessPlayerAlarmConfig extends Config
 		return true;
 	}
 
+	@ConfigItem(
+			keyName = "ignoreFriendsChat",
+			name = "Ignore friends chat",
+			description = "Do not alarm for players in the same friends chat as you",
+			position = 5
+	)
+	default boolean ignoreFriendsChat()
+	{
+		return false;
+	}
+
 	@Alpha
 	@ConfigItem(
 			keyName = "flashColor",
 			name = "Flash color",
 			description = "Sets the color of the alarm flashes",
-			position = 5
+			position = 6
 	)
 	default Color flashColor()
 	{
 		return new Color(255, 255, 0, 70);
 	}
-
 }
