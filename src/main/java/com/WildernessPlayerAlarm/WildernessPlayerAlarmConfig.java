@@ -76,12 +76,24 @@ public interface WildernessPlayerAlarmConfig extends Config
 		return false;
 	}
 
+	@ConfigItem(
+			keyName = "timeoutToIgnore",
+			name = "Timeout",
+			description = "Ignores players after they've been present for the specified time (in seconds)." +
+					" A value of 0 means players won't be ignored regardless of how long they are present.",
+			position = 6
+	)
+	default int timeoutToIgnore()
+	{
+		return 0;
+	}
+
 	@Alpha
 	@ConfigItem(
 			keyName = "flashColor",
 			name = "Flash color",
 			description = "Sets the color of the alarm flashes",
-			position = 6
+			position = 7
 	)
 	default Color flashColor()
 	{
