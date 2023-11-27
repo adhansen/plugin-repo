@@ -99,17 +99,26 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 		}
 
 		// Don't trigger for clan members if option is selected
-		if (config.ignoreClan() && player.isClanMember()){
+		if (config.ignoreClan() && player.isClanMember())
+		{
 			return false;
 		}
 
 		// Don't trigger for friends if option is selected
-		if (config.ignoreFriends() && player.isFriend()){
+		if (config.ignoreFriends() && player.isFriend())
+		{
 			return false;
 		}
 
 		// Don't trigger for friends if option is selected
-		if (config.ignoreFriendsChat() && player.isFriendsChatMember()){
+		if (config.ignoreFriendsChat() && player.isFriendsChatMember())
+		{
+			return false;
+		}
+
+		// Don't trigger for ignored players if option is selected
+		if (config.ignoreIgnored() && client.getIgnoreContainer().findByName(player.getName()) != null)
+		{
 			return false;
 		}
 
