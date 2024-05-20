@@ -14,7 +14,7 @@ import net.runelite.api.Client;
 import net.runelite.api.WorldType;
 import net.runelite.api.Actor;
 import net.runelite.api.coords.LocalPoint;
-import net.runelite.api.events.ClientTick;
+import net.runelite.api.events.GameTick;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.Notifier;
@@ -49,7 +49,7 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 	private final HashMap<String, Integer> playerNameToTimeInRange = new HashMap<>();
 
 	@Subscribe
-	public void onClientTick(ClientTick clientTick) {
+	public void onGameTick(GameTick event) {
 		List<Player> dangerousPlayers = getPlayersInRange()
 				.stream()
 				.filter(this::shouldPlayerTriggerAlarm)
@@ -143,8 +143,8 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 		for (Player player : playersInRange) {
 			String playerName = player.getName();
 			int timeInRange = playerNameToTimeInRange.containsKey(playerName)
-					? playerNameToTimeInRange.get(playerName) + Constants.CLIENT_TICK_LENGTH
-					: Constants.CLIENT_TICK_LENGTH;
+					? playerNameToTimeInRange.get(playerName) + Constants.GAME_TICK_LENGTH
+					: Constants.GAME_TICK_LENGTH;
 			playerNameToTimeInRange.put(playerName, timeInRange);
 		}
 
