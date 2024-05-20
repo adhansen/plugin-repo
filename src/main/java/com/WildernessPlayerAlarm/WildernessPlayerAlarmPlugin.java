@@ -16,6 +16,7 @@ import net.runelite.api.Actor;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.events.ClientTick;
 import net.runelite.client.config.ConfigManager;
+import net.runelite.client.config.Notification;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.Notifier;
 import net.runelite.client.plugins.Plugin;
@@ -39,14 +40,30 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 	private OverlayManager overlayManager;
 
 	@Inject
-	private AlarmOverlay overlay;
+	private Notifier notifier;
 
 	@Inject
-	private Notifier notifier;
+	private ConfigManager configManager;
 
 	private boolean overlayOn = false;
 
 	private final HashMap<String, Integer> playerNameToTimeInRange = new HashMap<>();
+
+	@Override
+	protected void startUp() throws Exception {
+		String migrated = configManager.getConfiguration(WildernessPlayerAlarmConfig.GROUP, "migrated");
+		if (migrated != null && !"1".equals(migrated)) {
+			return;
+		}
+		boolean oldDesktopNotification = configManager.getConfiguration(WildernessPlayerAlarmConfig.GROUP,"desktopNotification", boolean.class);
+		if (oldDesktopNotification) {
+			configManager.setConfiguration(WildernessPlayerAlarmConfig.GROUP,"desktopNotification_newNotification", Notification.ON);
+		} else {
+			configManager.setConfiguration(WildernessPlayerAlarmConfig.GROUP,"desktopNotification_newNotification", Notification.OFF);
+		}
+		configManager.unsetConfiguration(WildernessPlayerAlarmConfig.GROUP,"desktopNotification");
+		configManager.setConfiguration(WildernessPlayerAlarmConfig.GROUP, "migrated", "2");
+	}
 
 	@Subscribe
 	public void onClientTick(ClientTick clientTick) {
@@ -66,18 +83,13 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 		boolean shouldAlarm = (isInWilderness || isInDangerousPvpArea) && dangerousPlayers.size() > 0;
 		if (shouldAlarm && !overlayOn)
 		{
-			if (config.desktopNotification())
-			{
-				notifier.notify("Player spotted!");
-			}
+			notifier.notify(config.desktopNotification(), "Player spotted!");
 			overlayOn = true;
-			overlayManager.add(overlay);
 		}
 
 		if (!shouldAlarm)
 		{
 			overlayOn = false;
-			overlayManager.remove(overlay);
 		}
 	}
 
@@ -166,16 +178,6 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 	private boolean isInPvp()
 	{
 		return WorldType.isPvpWorld(client.getWorldType()) && client.getVarbitValue(Varbits.PVP_SPEC_ORB) == 1;
-	}
-
-	@Override
-	protected void shutDown() throws Exception
-	{
-		if (overlayOn)
-		{
-			overlayOn = false;
-			overlayManager.remove(overlay);
-		}
 	}
 
 	@Provides

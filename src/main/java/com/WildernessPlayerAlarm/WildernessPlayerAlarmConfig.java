@@ -3,9 +3,11 @@ package com.WildernessPlayerAlarm;
 import java.awt.Color;
 import net.runelite.client.config.*;
 
-@ConfigGroup("WildernessPlayerAlarm")
+@ConfigGroup(WildernessPlayerAlarmConfig.GROUP)
 public interface WildernessPlayerAlarmConfig extends Config
 {
+	String GROUP = "WildernessPlayerAlarm";
+
 	@Range(
 		max = 30,
 		min = 0
@@ -23,14 +25,14 @@ public interface WildernessPlayerAlarmConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "desktopNotification",
+			keyName = "desktopNotification_newNotification",
 			name = "Desktop notification",
 			description = "Receive a desktop notification when the alarm triggers",
 			position = 1
 	)
-	default boolean desktopNotification()
+	default Notification desktopNotification()
 	{
-		return false;
+		return Notification.OFF;
 	}
 
 	@ConfigItem(
