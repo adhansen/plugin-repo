@@ -66,6 +66,8 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 
 		configManager.setConfiguration(WildernessPlayerAlarmConfig.GROUP,"notification", newNotification);
 		configManager.unsetConfiguration(WildernessPlayerAlarmConfig.GROUP,"desktopNotification");
+		configManager.unsetConfiguration(WildernessPlayerAlarmConfig.GROUP,"timeoutToIgnore");
+		configManager.unsetConfiguration(WildernessPlayerAlarmConfig.GROUP,"flashColor");
 		configManager.setConfiguration(WildernessPlayerAlarmConfig.GROUP, "migrated", "2");
 	}
 
