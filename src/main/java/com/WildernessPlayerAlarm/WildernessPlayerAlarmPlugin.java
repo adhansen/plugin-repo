@@ -2,6 +2,7 @@ package com.WildernessPlayerAlarm;
 
 import com.google.inject.Provides;
 
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,12 +56,15 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 		if (migrated != null && !"1".equals(migrated)) {
 			return;
 		}
+
 		boolean oldDesktopNotification = configManager.getConfiguration(WildernessPlayerAlarmConfig.GROUP,"desktopNotification", boolean.class);
-		if (oldDesktopNotification) {
-			configManager.setConfiguration(WildernessPlayerAlarmConfig.GROUP,"desktopNotification_newNotification", Notification.ON);
-		} else {
-			configManager.setConfiguration(WildernessPlayerAlarmConfig.GROUP,"desktopNotification_newNotification", Notification.OFF);
-		}
+		Color oldFlashColor = configManager.getConfiguration(WildernessPlayerAlarmConfig.GROUP, "flashColor", Color.class);
+
+		Notification newNotification = Defaults.DefaultNotification
+			.withTray(oldDesktopNotification)
+			.withFlashColor(oldFlashColor);
+
+		configManager.setConfiguration(WildernessPlayerAlarmConfig.GROUP,"notification", newNotification);
 		configManager.unsetConfiguration(WildernessPlayerAlarmConfig.GROUP,"desktopNotification");
 		configManager.setConfiguration(WildernessPlayerAlarmConfig.GROUP, "migrated", "2");
 	}
@@ -72,18 +76,12 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 				.filter(this::shouldPlayerTriggerAlarm)
 				.collect(Collectors.toList());
 
-		// Keep track of how long players have been in range if timeout is enabled
-		if (config.timeoutToIgnore() > 0)
-		{
-			updatePlayersInRange();
-		}
-
 		boolean isInWilderness = client.getVarbitValue(Varbits.IN_WILDERNESS) == 1;
 		boolean isInDangerousPvpArea = config.pvpWorldAlerts() && isInPvp();
 		boolean shouldAlarm = (isInWilderness || isInDangerousPvpArea) && dangerousPlayers.size() > 0;
 		if (shouldAlarm && !overlayOn)
 		{
-			notifier.notify(config.desktopNotification(), "Player spotted!");
+			notifier.notify(config.notification(), "Player spotted!");
 			overlayOn = true;
 		}
 
@@ -132,16 +130,6 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 		if (config.ignoreIgnored() && client.getIgnoreContainer().findByName(player.getName()) != null)
 		{
 			return false;
-		}
-
-		// Ignore players that have been on screen longer than the timeout
-		if (config.timeoutToIgnore() > 0)
-		{
-			int timePlayerIsOnScreen = playerNameToTimeInRange.getOrDefault(player.getName(), 0);
-			if (timePlayerIsOnScreen > config.timeoutToIgnore() * 1000)
-			{
-				return false;
-			}
 		}
 
 		return true;
