@@ -39,31 +39,28 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 
 	private final HashMap<String, Integer> playerNameToTimeInRange = new HashMap<>();
 
+	private final SafeZoneHelper zoneHelper = new SafeZoneHelper();
+
 	@Subscribe
 	public void onGameTick(GameTick event) {
 		boolean isInWilderness = client.getVarbitValue(Varbits.IN_WILDERNESS) == 1;
 		boolean isInDangerousPvpArea = config.pvpWorldAlerts() && isInPvp();
 		if (!isInWilderness && !isInDangerousPvpArea)
 		{
+			notified = false;
 			return;
 		}
 
 		List<Player> dangerousPlayers = getPlayersInRange()
 				.stream()
-				.filter(this::shouldPlayerTriggerAlarm)
+				.filter(player->shouldPlayerTriggerAlarm(player, isInWilderness))
 				.collect(Collectors.toList());
 		boolean shouldAlarm = (isInWilderness || isInDangerousPvpArea) && dangerousPlayers.size() > 0;
 		if (shouldAlarm && !notified)
 		{
 			notifier.notify(config.notification(), "Player spotted!");
-			notified = true;
 		}
-
-		// Reset for next notification
-		if (!shouldAlarm)
-		{
-			notified = false;
-		}
+		notified = shouldAlarm;
 	}
 
 	private List<Player> getPlayersInRange()
@@ -75,7 +72,7 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 				.collect(Collectors.toList());
 	}
 
-	private boolean shouldPlayerTriggerAlarm(Player player)
+	private boolean shouldPlayerTriggerAlarm(Player player, boolean inWilderness)
 	{
 		// Don't trigger for yourself
 		if (player.getId() == client.getLocalPlayer().getId())
@@ -103,6 +100,12 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 
 		// Don't trigger for ignored players if option is selected
 		if (config.ignoreIgnored() && client.getIgnoreContainer().findByName(player.getName()) != null)
+		{
+			return false;
+		}
+
+		// Don't trigger for players inside Ferox Enclave (short-circuit to only check from wildy)
+		if (inWilderness && zoneHelper.PointInsideFerox(player.getWorldLocation()))
 		{
 			return false;
 		}
