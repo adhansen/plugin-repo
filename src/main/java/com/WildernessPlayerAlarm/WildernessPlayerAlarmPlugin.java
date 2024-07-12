@@ -2,7 +2,7 @@ package com.WildernessPlayerAlarm;
 
 import com.google.inject.Provides;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
@@ -38,7 +38,7 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 
 	private boolean notified = false;
 
-	private final HashMap<String, Integer> playerNameToTimeInRange = new HashMap<>();
+	private List<Player> previousTickPlayersInRange = new ArrayList<Player>();
 
 	private final SafeZoneHelper zoneHelper = new SafeZoneHelper();
 
@@ -57,10 +57,13 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 				.filter(player->shouldPlayerTriggerAlarm(player, isInWilderness))
 				.collect(Collectors.toList());
 		boolean shouldAlarm = (isInWilderness || isInDangerousPvpArea) && dangerousPlayers.size() > 0;
+		notified = previousTickPlayersInRange.containsAll(dangerousPlayers);
+
 		if (shouldAlarm && !notified)
 		{
 			notifier.notify(config.notification(), "Player spotted!");
 		}
+		previousTickPlayersInRange = dangerousPlayers;
 		notified = shouldAlarm;
 	}
 
