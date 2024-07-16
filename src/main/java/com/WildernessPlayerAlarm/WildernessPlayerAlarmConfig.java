@@ -30,14 +30,13 @@ public interface WildernessPlayerAlarmConfig extends Config
 	)
 	default Notification customizableNotification()
 	{
-		Notification notification = new Notification();
-		return notification;
+		return new Notification();
 	}
 
 	@ConfigItem(
 			keyName = "pvpWorldAlerts",
 			name = "Pvp world alerts",
-			description = "Will alert you anywhere when in pvp worlds",
+			description = "Will alert you anywhere when in PVP or DMM worlds",
 			position = 2
 	)
 	default boolean pvpWorldAlerts() {
@@ -111,4 +110,12 @@ public interface WildernessPlayerAlarmConfig extends Config
 	{
 		return new Color(255, 255, 0, 70);
 	}
+
+	@ConfigItem(
+			keyName = "flashControl",
+			name = "Flash control",
+			description = "Control the cadence at which the screen will flash with the chosen color",
+			position = 9
+	)
+	default FlashControl flashControl() { return FlashControl.NORMAL; }
 }

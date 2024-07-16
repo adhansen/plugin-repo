@@ -132,12 +132,6 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 			return false;
 		}
 
-		// Don't trigger for players inside Ferox Enclave (short-circuit to only check from wildy)
-		if (inWilderness && zoneHelper.PointInsideFerox(player.getWorldLocation()))
-		{
-			return false;
-		}
-
 		// Ignore players that have been on screen longer than the timeout
 		if (config.timeoutToIgnore() > 0)
 		{
@@ -146,6 +140,12 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 			{
 				return false;
 			}
+		}
+
+		// Don't trigger for players inside Ferox Enclave (short-circuit to only check from wildy)
+		if (inWilderness && zoneHelper.PointInsideFerox(player.getWorldLocation()))
+		{
+			return false;
 		}
 
 		return true;
