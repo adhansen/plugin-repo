@@ -2,15 +2,17 @@ package com.WildernessPlayerAlarm;
 
 import com.google.inject.Provides;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.Constants;
 import net.runelite.api.Player;
 import net.runelite.api.Varbits;
 import net.runelite.api.Client;
 import net.runelite.api.WorldType;
+import net.runelite.api.Actor;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.widgets.ComponentID;
@@ -19,6 +21,7 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.Notifier;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.ui.overlay.OverlayManager;
 
 
 @Slf4j
@@ -34,11 +37,17 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 	private WildernessPlayerAlarmConfig config;
 
 	@Inject
+	private OverlayManager overlayManager;
+
+	@Inject
+	private AlarmOverlay overlay;
+
+	@Inject
 	private Notifier notifier;
 
-	private boolean notified = false;
+	private boolean overlayOn = false;
 
-	private List<Player> previousTickPlayersInRange = new ArrayList<Player>();
+	private final HashMap<String, Integer> playerNameToTimeInRange = new HashMap<>();
 
 	private final SafeZoneHelper zoneHelper = new SafeZoneHelper();
 
@@ -48,7 +57,10 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 		boolean isInDangerousPvpArea = config.pvpWorldAlerts() && isInPvp();
 		if (!isInWilderness && !isInDangerousPvpArea)
 		{
-			notified = false;
+			if (overlayOn)
+			{
+				removeOverlay();
+			}
 			return;
 		}
 
@@ -56,15 +68,27 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 				.stream()
 				.filter(player->shouldPlayerTriggerAlarm(player, isInWilderness))
 				.collect(Collectors.toList());
-		boolean shouldAlarm = (isInWilderness || isInDangerousPvpArea) && dangerousPlayers.size() > 0;
-		notified = previousTickPlayersInRange.containsAll(dangerousPlayers);
 
-		if (shouldAlarm && !notified)
+		// Keep track of how long players have been in range if timeout is enabled
+		if (config.timeoutToIgnore() > 0)
 		{
-			notifier.notify(config.notification(), "Player spotted!");
+			updatePlayersInRange();
 		}
-		previousTickPlayersInRange = dangerousPlayers;
-		notified = shouldAlarm;
+
+		boolean shouldAlarm = (isInWilderness || isInDangerousPvpArea) && dangerousPlayers.size() > 0;
+		if (shouldAlarm && !overlayOn)
+		{
+			if (config.desktopNotification())
+			{
+				notifier.notify("Player spotted!");
+			}
+			addOverlay();
+		}
+
+		if (!shouldAlarm)
+		{
+			removeOverlay();
+		}
 	}
 
 	private List<Player> getPlayersInRange()
@@ -114,7 +138,45 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 			return false;
 		}
 
+		// Ignore players that have been on screen longer than the timeout
+		if (config.timeoutToIgnore() > 0)
+		{
+			int timePlayerIsOnScreen = playerNameToTimeInRange.getOrDefault(player.getName(), 0);
+			if (timePlayerIsOnScreen > config.timeoutToIgnore() * 1000)
+			{
+				return false;
+			}
+		}
+
 		return true;
+	}
+
+	private void updatePlayersInRange()
+	{
+		List<Player> playersInRange = getPlayersInRange();
+
+		// Update players that are still in range
+		for (Player player : playersInRange) {
+			String playerName = player.getName();
+			int timeInRange = playerNameToTimeInRange.containsKey(playerName)
+					? playerNameToTimeInRange.get(playerName) + Constants.GAME_TICK_LENGTH
+					: Constants.GAME_TICK_LENGTH;
+			playerNameToTimeInRange.put(playerName, timeInRange);
+		}
+
+		// Remove players that are out of range
+		List<String> playerNames = playersInRange
+				.stream()
+				.map(Actor::getName)
+				.collect(Collectors.toList());
+		List<String> playersToReset = playerNameToTimeInRange
+				.keySet()
+				.stream()
+				.filter(playerName -> !playerNames.contains(playerName))
+				.collect(Collectors.toList());
+		for (String playerName : playersToReset) {
+			playerNameToTimeInRange.remove(playerName);
+		}
 	}
 
 	private boolean isInPvp()
@@ -124,6 +186,27 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 		pvp &= !widgetText.startsWith("Protection");
 		pvp &= !widgetText.startsWith("Guarded");
 		return pvp;
+	}
+
+	private void addOverlay()
+	{
+		overlayOn = true;
+		overlayManager.add(overlay);
+	}
+
+	private void removeOverlay()
+	{
+		overlayOn = false;
+		overlayManager.remove(overlay);
+	}
+
+	@Override
+	protected void shutDown() throws Exception
+	{
+		if (overlayOn)
+		{
+			removeOverlay();
+		}
 	}
 
 	@Provides

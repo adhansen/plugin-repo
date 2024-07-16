@@ -1,5 +1,6 @@
 package com.WildernessPlayerAlarm;
 
+import java.awt.Color;
 import net.runelite.client.config.*;
 
 @ConfigGroup("WildernessPlayerAlarm")
@@ -22,20 +23,20 @@ public interface WildernessPlayerAlarmConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "notification",
-			name = "Notification",
-			description = "Configurable notification when the alarm is triggered",
+			keyName = "desktopNotification",
+			name = "Desktop notification",
+			description = "Receive a desktop notification when the alarm triggers",
 			position = 1
 	)
-	default Notification notification()
+	default boolean desktopNotification()
 	{
-		return new Notification().withEnabled(true);
+		return false;
 	}
 
 	@ConfigItem(
 			keyName = "pvpWorldAlerts",
 			name = "Pvp world alerts",
-			description = "Will alert you anywhere when in PVP or DMM worlds",
+			description = "Will alert you anywhere when in pvp worlds",
 			position = 2
 	)
 	default boolean pvpWorldAlerts() {
@@ -84,5 +85,29 @@ public interface WildernessPlayerAlarmConfig extends Config
 	default boolean ignoreIgnored()
 	{
 		return false;
+	}
+
+	@ConfigItem(
+			keyName = "timeoutToIgnore",
+			name = "Timeout",
+			description = "Ignores players after they've been present for the specified time (in seconds)." +
+					" A value of 0 means players won't be ignored regardless of how long they are present.",
+			position = 7
+	)
+	default int timeoutToIgnore()
+	{
+		return 0;
+	}
+
+	@Alpha
+	@ConfigItem(
+			keyName = "flashColor",
+			name = "Flash color",
+			description = "Sets the color of the alarm flashes",
+			position = 8
+	)
+	default Color flashColor()
+	{
+		return new Color(255, 255, 0, 70);
 	}
 }
