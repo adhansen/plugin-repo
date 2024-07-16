@@ -23,14 +23,15 @@ public interface WildernessPlayerAlarmConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "desktopNotification",
-			name = "Desktop notification",
-			description = "Receive a desktop notification when the alarm triggers",
+			keyName = "customizableNotification",
+			name = "Customizable Notification",
+			description = "Customizable RuneLite notification (it is recommended to not doubly-enable flashing)",
 			position = 1
 	)
-	default boolean desktopNotification()
+	default Notification customizableNotification()
 	{
-		return false;
+		Notification notification = new Notification();
+		return notification;
 	}
 
 	@ConfigItem(

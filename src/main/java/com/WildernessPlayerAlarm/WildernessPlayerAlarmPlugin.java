@@ -78,9 +78,9 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 		boolean shouldAlarm = (isInWilderness || isInDangerousPvpArea) && dangerousPlayers.size() > 0;
 		if (shouldAlarm && !overlayOn)
 		{
-			if (config.desktopNotification())
+			if (config.customizableNotification().isEnabled())
 			{
-				notifier.notify("Player spotted!");
+				notifier.notify(config.customizableNotification(), "Player spotted!");
 			}
 			addOverlay();
 		}
