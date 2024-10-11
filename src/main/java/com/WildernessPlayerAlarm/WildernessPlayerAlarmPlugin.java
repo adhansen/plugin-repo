@@ -209,6 +209,13 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 		}
 	}
 
+	@Subscribe
+	public void onConfigChanged(ConfigChanged configChanged) {
+		if(configChanged.getGroup().equals("WildernessPlayerAlarm")) {
+			overlay.updateConfig(config);
+		}
+	}
+
 	@Provides
 	WildernessPlayerAlarmConfig provideConfig(ConfigManager configManager)
 	{
