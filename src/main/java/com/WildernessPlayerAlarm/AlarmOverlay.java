@@ -5,53 +5,55 @@ import javax.inject.Inject;
 import net.runelite.api.Client;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPanel;
-import net.runelite.client.ui.overlay.components.LineComponent;
+import net.runelite.client.ui.overlay.OverlayPosition;
 
 public class AlarmOverlay extends OverlayPanel
 {
-    private final WildernessPlayerAlarmConfig config;
     private final Client client;
     private final Color transparent = new Color(0, 0, 0, 0);
+
+    private Color flashColor;
+    private FlashControl flashControl;
 
     @Inject
     private AlarmOverlay(WildernessPlayerAlarmConfig config, Client client)
     {
-        this.config = config;
         this.client = client;
-        setLayer(OverlayLayer.ABOVE_SCENE);
-        for(int i = 0; i < 100; ++i)
-        {
-            panelComponent.getChildren().add((LineComponent.builder())
-                    .left(" ")
-                    .build());
-        }
+        updateConfig(config);
+
+        setPosition(OverlayPosition.DYNAMIC);
+        //Alternatively use other OverlayLayers to e.g. not render on top of the inventory, chatbox, minimap etc
+        setLayer(OverlayLayer.ALWAYS_ON_TOP);
+    }
+
+    public void updateConfig(WildernessPlayerAlarmConfig config) {
+        this.flashColor = config.flashColor();
+        this.flashControl = config.flashControl();
     }
 
     @Override
     public Dimension render(Graphics2D graphics)
     {
-        FlashControl configuredSpeed = config.flashControl();
-        panelComponent.setPreferredSize(new Dimension(client.getCanvasWidth(), client.getCanvasHeight()));
-
-        switch (configuredSpeed)
+        switch (this.flashControl)
         {
             case OFF:
-                panelComponent.setBackgroundColor(transparent);
+                graphics.setColor(transparent);
                 break;
             case SOLID:
-                panelComponent.setBackgroundColor(config.flashColor());
+                graphics.setColor(flashColor);
                 break;
             default:
-                if ((client.getGameCycle() % config.flashControl().getRate()) >= (config.flashControl().getRate() / 2))
+                if ((client.getGameCycle() % flashControl.getRate()) >= (flashControl.getRate() / 2))
                 {
-                    panelComponent.setBackgroundColor(config.flashColor());
+                    graphics.setColor(flashColor);
                 } else
                 {
-                    panelComponent.setBackgroundColor(transparent);
+                    graphics.setColor(transparent);
                 }
                 break;
         }
+        graphics.fillRect(0, 0, client.getCanvasWidth(), client.getCanvasHeight());
 
-        return panelComponent.render(graphics);
+        return null;
     }
 }
