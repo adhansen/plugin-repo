@@ -118,4 +118,15 @@ public interface WildernessPlayerAlarmConfig extends Config
 			position = 9
 	)
 	default FlashControl flashControl() { return FlashControl.NORMAL; }
+
+	@ConfigItem(
+			keyName = "customIgnores",
+			name = "Custom list of players to ignore:",
+			description = "Comma-separated list of players that shouldn't trigger the alarm (case-insensitive)",
+			position = 10
+	)
+	default String itemList()
+	{
+		return "";
+	}
 }

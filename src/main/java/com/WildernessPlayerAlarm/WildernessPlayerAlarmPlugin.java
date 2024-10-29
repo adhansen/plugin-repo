@@ -1,8 +1,10 @@
 package com.WildernessPlayerAlarm;
 
+import com.google.common.base.Splitter;
 import com.google.inject.Provides;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
@@ -18,6 +20,7 @@ import net.runelite.api.events.GameTick;
 import net.runelite.api.widgets.ComponentID;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.Notifier;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -46,6 +49,13 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 	private Notifier notifier;
 
 	private boolean overlayOn = false;
+
+	private HashSet<String> customIgnores = new HashSet<>();
+
+	private Splitter CONFIG_SPLITTER = Splitter
+			.onPattern("([,\n])")
+			.omitEmptyStrings()
+			.trimResults();
 
 	private final HashMap<String, Integer> playerNameToTimeInRange = new HashMap<>();
 
@@ -132,6 +142,12 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 			return false;
 		}
 
+		// Don't trigger for players in the custom ignore list
+		if (customIgnores.contains(player.getName().toLowerCase()))
+		{
+			return false;
+		}
+
 		// Ignore players that have been on screen longer than the timeout
 		if (config.timeoutToIgnore() > 0)
 		{
@@ -179,6 +195,12 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 		}
 	}
 
+	private void resetCustomIgnores()
+	{
+		customIgnores.clear();
+		customIgnores.addAll(CONFIG_SPLITTER.splitToList(config.itemList().toLowerCase()));
+	}
+
 	private boolean isInPvp()
 	{
 		boolean pvp = WorldType.isPvpWorld(client.getWorldType()) && (client.getVarbitValue(Varbits.PVP_SPEC_ORB) == 1);
@@ -201,11 +223,25 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 	}
 
 	@Override
+	protected void startUp(){
+		resetCustomIgnores();
+	}
+
+	@Override
 	protected void shutDown() throws Exception
 	{
 		if (overlayOn)
 		{
 			removeOverlay();
+		}
+	}
+
+	@Subscribe
+	private void onConfigChanged(ConfigChanged event)
+	{
+		if (event.getGroup().equals("WildernessPlayerAlarm"))
+		{
+			resetCustomIgnores();
 		}
 	}
 
