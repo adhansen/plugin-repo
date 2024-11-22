@@ -17,13 +17,16 @@ public class AlarmOverlay extends OverlayPanel
     {
         this.config = config;
         this.client = client;
-        setLayer(OverlayLayer.ABOVE_SCENE);
+        setPriority(PRIORITY_LOW);
+        setMovable(false);
+        setSnappable(false);
+        setDragTargetable(false);
     }
 
     @Override
     public Dimension render(Graphics2D graphics)
     {
-        FlashControl configuredSpeed = config.flashControl();
+        FlashSpeed configuredSpeed = config.flashSpeed();
 
         switch (configuredSpeed)
         {
@@ -34,7 +37,7 @@ public class AlarmOverlay extends OverlayPanel
                 graphics.setColor(config.flashColor());
                 break;
             default:
-                if ((client.getGameCycle() % config.flashControl().getRate()) >= (config.flashControl().getRate() / 2))
+                if ((client.getGameCycle() % config.flashSpeed().getRate()) >= (config.flashSpeed().getRate() / 2))
                 {
                     graphics.setColor(config.flashColor());
                 } else

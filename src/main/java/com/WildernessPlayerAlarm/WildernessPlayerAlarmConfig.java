@@ -112,18 +112,26 @@ public interface WildernessPlayerAlarmConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "flashControl",
-			name = "Flash control",
+			keyName = "flashSpeed",
+			name = "Flash speed",
 			description = "Control the cadence at which the screen will flash with the chosen color",
 			position = 9
 	)
-	default FlashControl flashControl() { return FlashControl.NORMAL; }
+	default FlashSpeed flashSpeed() { return FlashSpeed.NORMAL; }
+
+	@ConfigItem(
+			keyName = "flashLayer",
+			name = "Flash layer",
+			description = "Advanced: control the layer that the flash renders on",
+			position = 10
+	)
+	default FlashLayer flashLayer() { return FlashLayer.ABOVE_SCENE; }
 
 	@ConfigItem(
 			keyName = "customIgnores",
 			name = "Custom list of players to ignore:",
 			description = "Comma-separated list of players that shouldn't trigger the alarm (case-insensitive)",
-			position = 10
+			position = 11
 	)
 	default String customIgnoresList()
 	{

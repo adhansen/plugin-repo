@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum FlashControl
+public enum FlashSpeed
 {
     OFF("Off", -1),
     SLOW("Slow", 80),

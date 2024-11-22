@@ -223,7 +223,9 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 	}
 
 	@Override
-	protected void startUp(){
+	protected void startUp()
+	{
+		overlay.setLayer(config.flashLayer().getLayer());
 		resetCustomIgnores();
 	}
 
@@ -241,6 +243,12 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 	{
 		if (event.getGroup().equals("WildernessPlayerAlarm"))
 		{
+			overlay.setLayer(config.flashLayer().getLayer());
+			if(overlayOn)
+			{
+				removeOverlay();
+				addOverlay();
+			}
 			resetCustomIgnores();
 		}
 	}
