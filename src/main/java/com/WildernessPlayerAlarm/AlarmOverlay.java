@@ -45,6 +45,6 @@ public class AlarmOverlay extends OverlayPanel
         }
         //Fill the rectangle using the client width and height
         graphics.fillRect(0, 0, client.getCanvasWidth(), client.getCanvasHeight());
-        return null;
+        return client.getCanvas().getSize();
     }
 }
