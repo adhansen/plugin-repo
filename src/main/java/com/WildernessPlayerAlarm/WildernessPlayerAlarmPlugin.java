@@ -198,7 +198,7 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 	private void resetCustomIgnores()
 	{
 		customIgnores.clear();
-		customIgnores.addAll(CONFIG_SPLITTER.splitToList(config.itemList().toLowerCase()));
+		customIgnores.addAll(CONFIG_SPLITTER.splitToList(config.customIgnoresList().toLowerCase()));
 	}
 
 	private boolean isInPvp()

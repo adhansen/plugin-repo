@@ -125,7 +125,7 @@ public interface WildernessPlayerAlarmConfig extends Config
 			description = "Comma-separated list of players that shouldn't trigger the alarm (case-insensitive)",
 			position = 10
 	)
-	default String itemList()
+	default String customIgnoresList()
 	{
 		return "";
 	}
