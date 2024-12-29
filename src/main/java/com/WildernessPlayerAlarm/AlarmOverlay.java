@@ -3,7 +3,6 @@ package com.WildernessPlayerAlarm;
 import java.awt.*;
 import javax.inject.Inject;
 import net.runelite.api.Client;
-import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPanel;
 
 public class AlarmOverlay extends OverlayPanel
