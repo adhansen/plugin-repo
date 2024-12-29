@@ -25,7 +25,7 @@ public class AlarmOverlay extends OverlayPanel
     @Override
     public Dimension render(Graphics2D graphics)
     {
-        FlashSpeed configuredSpeed = config.flashSpeed();
+        FlashSpeed configuredSpeed = config.flashControl();
 
         switch (configuredSpeed)
         {
@@ -36,7 +36,7 @@ public class AlarmOverlay extends OverlayPanel
                 graphics.setColor(config.flashColor());
                 break;
             default:
-                if ((client.getGameCycle() % config.flashSpeed().getRate()) >= (config.flashSpeed().getRate() / 2))
+                if ((client.getGameCycle() % config.flashControl().getRate()) >= (config.flashControl().getRate() / 2))
                 {
                     graphics.setColor(config.flashColor());
                 } else

@@ -112,12 +112,12 @@ public interface WildernessPlayerAlarmConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "flashSpeed",
+			keyName = "flashControl",
 			name = "Flash speed",
 			description = "Control the cadence at which the screen will flash with the chosen color",
 			position = 9
 	)
-	default FlashSpeed flashSpeed() { return FlashSpeed.NORMAL; }
+	default FlashSpeed flashControl() { return FlashSpeed.NORMAL; }
 
 	@ConfigItem(
 			keyName = "flashLayer",

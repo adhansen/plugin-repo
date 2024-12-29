@@ -13,7 +13,7 @@ public enum FlashLayer {
     ALWAYS_ON_TOP("Always on top", OverlayLayer.ALWAYS_ON_TOP);
 
 
-    private final       String type;
+    private final String       type;
     private final OverlayLayer layer;
 
     @Override
