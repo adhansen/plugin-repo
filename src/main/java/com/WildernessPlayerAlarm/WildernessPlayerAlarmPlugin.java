@@ -6,6 +6,7 @@ import com.google.inject.Provides;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Stream;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -50,9 +51,9 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 
 	private boolean overlayOn = false;
 
-	private HashSet<String> customIgnores = new HashSet<>();
+	private final Set<String> customIgnores = new HashSet<>();
 
-	private Splitter CONFIG_SPLITTER = Splitter
+	private static final Splitter CONFIG_SPLITTER = Splitter
 			.onPattern("([,\n])")
 			.omitEmptyStrings()
 			.trimResults();
