@@ -16,6 +16,7 @@ import net.runelite.api.Client;
 import net.runelite.api.WorldType;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.events.GameTick;
+import net.runelite.api.events.PlayerDespawned;
 import net.runelite.api.widgets.ComponentID;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -58,6 +59,12 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 	private final HashMap<String, Integer> playerNameToTimeInRange = new HashMap<>();
 
 	private final SafeZoneHelper zoneHelper = new SafeZoneHelper();
+
+	@Subscribe
+	public void onPlayerDespawned(PlayerDespawned event)
+	{
+		playerNameToTimeInRange.remove(event.getPlayer().getName());
+	}
 
 	@Subscribe
 	public void onGameTick(GameTick event) {
