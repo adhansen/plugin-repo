@@ -6,8 +6,6 @@ import com.google.inject.Provides;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -172,21 +170,11 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 		getPlayersInRange().forEach(player -> {
 			String playerName = player.getName();
 			playerNames.add(playerName);
-			int timeInRange = playerNameToTimeInRange.containsKey(playerName)
-					? playerNameToTimeInRange.get(playerName) + Constants.GAME_TICK_LENGTH
-					: Constants.GAME_TICK_LENGTH;
-			playerNameToTimeInRange.put(playerName, timeInRange);
+			playerNameToTimeInRange.merge(playerName, Constants.GAME_TICK_LENGTH, Integer::sum);
 		});
 
 		// Remove players that are out of range
-		List<String> playersToReset = playerNameToTimeInRange
-				.keySet()
-				.stream()
-				.filter(playerName -> !playerNames.contains(playerName))
-				.collect(Collectors.toList());
-		for (String playerName : playersToReset) {
-			playerNameToTimeInRange.remove(playerName);
-		}
+		playerNameToTimeInRange.keySet().removeIf(name -> !playerNames.contains(name));
 	}
 
 	private void resetCustomIgnores()
