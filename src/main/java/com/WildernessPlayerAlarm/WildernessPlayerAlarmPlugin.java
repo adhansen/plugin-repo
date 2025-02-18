@@ -18,6 +18,7 @@ import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.PlayerDespawned;
 import net.runelite.api.widgets.ComponentID;
+import net.runelite.api.widgets.Widget;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
@@ -193,7 +194,12 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 	private boolean isInPvp()
 	{
 		boolean pvp = WorldType.isPvpWorld(client.getWorldType()) && (client.getVarbitValue(Varbits.PVP_SPEC_ORB) == 1);
-		String widgetText = client.getWidget(ComponentID.PVP_WILDERNESS_LEVEL).getText();
+		Widget widget = client.getWidget(ComponentID.PVP_WILDERNESS_LEVEL);
+		if (widget == null)
+		{
+			return pvp;
+		}
+		String widgetText = widget.getText();
 		pvp &= !widgetText.startsWith("Protection");
 		pvp &= !widgetText.startsWith("Guarded");
 		return pvp;
