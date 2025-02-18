@@ -228,10 +228,15 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 	}
 
 	@Subscribe
-	private void onConfigChanged(ConfigChanged event)
+	public void onConfigChanged(ConfigChanged event)
 	{
 		if (event.getGroup().equals("WildernessPlayerAlarm"))
 		{
+			if ("timeoutToIgnore".equals(event.getKey()) && config.timeoutToIgnore() <= 0)
+			{
+				playerNameToTimeInRange.clear();
+			}
+
 			overlay.setLayer(config.flashLayer().getLayer());
 			if(overlayOn)
 			{
