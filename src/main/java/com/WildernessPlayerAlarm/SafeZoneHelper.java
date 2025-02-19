@@ -1,26 +1,23 @@
 package com.WildernessPlayerAlarm;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import lombok.RequiredArgsConstructor;
 import net.runelite.api.coords.WorldPoint;
 
 public class SafeZoneHelper
 {
-    private class Edge
+    @RequiredArgsConstructor
+    private static class Edge
     {
-        public int x1;
-        public int y1;
-        public int x2;
-        public int y2;
-        Edge(int x1_in, int y1_in, int x2_in, int y2_in)
-        {
-            x1 = x1_in;
-            y1 = y1_in;
-            x2 = x2_in;
-            y2 = y2_in;
-        }
+        public final int x1;
+        public final int y1;
+        public final int x2;
+        public final int y2;
     }
 
-    private static ArrayList<Edge> FEROX_ENCLAVE = new ArrayList<Edge>();
+    private static final List<Edge> FEROX_ENCLAVE = new ArrayList<>();
 
     SafeZoneHelper()
     {

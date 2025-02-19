@@ -12,7 +12,6 @@ public enum FlashLayer {
     ABOVE_WIDGETS("Above widgets", OverlayLayer.ABOVE_WIDGETS),
     ALWAYS_ON_TOP("Always on top", OverlayLayer.ALWAYS_ON_TOP);
 
-
     private final String       type;
     private final OverlayLayer layer;
 
