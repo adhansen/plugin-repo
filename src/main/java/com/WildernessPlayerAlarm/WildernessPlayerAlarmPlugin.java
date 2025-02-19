@@ -81,7 +81,7 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 			return;
 		}
 
-		boolean dangerousPlayers = getPlayersInRange()
+		boolean shouldAlarm = getPlayersInRange()
 				.anyMatch(player -> shouldPlayerTriggerAlarm(player, isInWilderness));
 
 		// Keep track of how long players have been in range if timeout is enabled
@@ -90,7 +90,6 @@ public class WildernessPlayerAlarmPlugin extends Plugin
 			updatePlayersInRange();
 		}
 
-		boolean shouldAlarm = (isInWilderness || isInDangerousPvpArea) && dangerousPlayers;
 		if (shouldAlarm && !overlayOn)
 		{
 			if (config.customizableNotification().isEnabled())
