@@ -174,6 +174,7 @@ public class WildernessPlayerAlarmPlugin extends Plugin {
     String widgetText = widget.getText();
     pvp &= !widgetText.startsWith("Protection");
     pvp &= !widgetText.startsWith("Guarded");
+    pvp &= !widgetText.startsWith("No PvP");
     return pvp;
   }
 
