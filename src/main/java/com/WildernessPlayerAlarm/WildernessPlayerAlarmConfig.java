@@ -5,7 +5,7 @@ import net.runelite.client.config.*;
 
 @ConfigGroup("WildernessPlayerAlarm")
 public interface WildernessPlayerAlarmConfig extends Config {
-  @Range(max = 30, min = 0)
+  @Range(max = 30)
   @ConfigItem(
       keyName = "alarmRadius",
       name = "Alarm radius",
@@ -112,11 +112,20 @@ public interface WildernessPlayerAlarmConfig extends Config {
   }
 
   @ConfigItem(
+      keyName = "ignoreMenuEntry",
+      name = "Ignore menu entry",
+      description = "Adds 'Ignore in Wildy' right-click option to other players in the wilderness",
+      position = 11)
+  default boolean ignoreMenuEntry() {
+    return false;
+  }
+
+  @ConfigItem(
       keyName = "customIgnores",
       name = "Custom list of players to ignore:",
       description =
           "Comma-separated list of players that shouldn't trigger the alarm (case-insensitive)",
-      position = 11)
+      position = 12)
   default String customIgnoresList() {
     return "";
   }

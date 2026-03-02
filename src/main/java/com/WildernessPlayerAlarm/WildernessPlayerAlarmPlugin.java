@@ -8,14 +8,13 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 import javax.inject.Inject;
+import javax.inject.Provider;
+
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.Client;
-import net.runelite.api.Constants;
-import net.runelite.api.Player;
-import net.runelite.api.Varbits;
-import net.runelite.api.WorldType;
+import net.runelite.api.*;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.events.GameTick;
+import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.events.PlayerDespawned;
 import net.runelite.api.widgets.ComponentID;
 import net.runelite.api.widgets.Widget;
@@ -23,6 +22,7 @@ import net.runelite.client.Notifier;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.menus.MenuManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
@@ -40,7 +40,13 @@ public class WildernessPlayerAlarmPlugin extends Plugin {
 
   @Inject private Notifier notifier;
 
+  @Inject private Provider<MenuManager> menuManager;
+
+  @Inject private ConfigManager configManager;
+
   private boolean overlayOn = false;
+
+  private boolean menuOptionAdded = false;
 
   private final Set<String> customIgnores = new HashSet<>();
 
@@ -51,6 +57,8 @@ public class WildernessPlayerAlarmPlugin extends Plugin {
 
   private final SafeZoneHelper zoneHelper = new SafeZoneHelper();
 
+  private static final String ADD_TO_IGNORE = "Ignore in Wildy";
+
   @Subscribe
   public void onPlayerDespawned(PlayerDespawned event) {
     playerNameToTimeInRange.remove(event.getPlayer().getName());
@@ -60,6 +68,7 @@ public class WildernessPlayerAlarmPlugin extends Plugin {
   public void onGameTick(GameTick event) {
     boolean isInWilderness = client.getVarbitValue(Varbits.IN_WILDERNESS) == 1;
     boolean isInDangerousPvpArea = config.pvpWorldAlerts() && isInPvp();
+    updateMenuOption(isInWilderness || isInDangerousPvpArea);
     if (!isInWilderness && !isInDangerousPvpArea) {
       if (overlayOn) {
         removeOverlay();
@@ -84,6 +93,31 @@ public class WildernessPlayerAlarmPlugin extends Plugin {
 
     if (!shouldAlarm) {
       removeOverlay();
+    }
+  }
+
+  @Subscribe
+  public void onMenuOptionClicked(MenuOptionClicked event) {
+    if (event.getMenuAction() == MenuAction.RUNELITE_PLAYER && event.getMenuOption().equals(ADD_TO_IGNORE)) {
+      Player player = event.getMenuEntry().getPlayer();
+      if (player == null) {
+        return;
+      }
+
+      String playerName = player.getName();
+      addPlayerToIgnoreList(playerName);
+    }
+  }
+
+  private void updateMenuOption(boolean isInWilderness) {
+    boolean shouldShow = config.ignoreMenuEntry() && isInWilderness;
+
+    if (shouldShow && !menuOptionAdded) {
+      menuManager.get().addPlayerMenuItem(ADD_TO_IGNORE);
+      menuOptionAdded = true;
+    } else if (!shouldShow && menuOptionAdded) {
+      menuManager.get().removePlayerMenuItem(ADD_TO_IGNORE);
+      menuOptionAdded = false;
     }
   }
 
@@ -187,6 +221,21 @@ public class WildernessPlayerAlarmPlugin extends Plugin {
     overlayManager.remove(overlay);
   }
 
+  private void addPlayerToIgnoreList(String playerName) {
+    if (playerName == null) {
+      return;
+    }
+
+    String existingIgnores = config.customIgnoresList();
+    Set<String> existingIgnoresSet = new HashSet<>(CONFIG_SPLITTER.splitToList(existingIgnores.toLowerCase()));
+    if (existingIgnoresSet.contains(playerName.toLowerCase())) {
+      return;
+    }
+
+    String updatedIgnores = existingIgnores.isEmpty() ? playerName : existingIgnores + ", " + playerName;
+    configManager.setConfiguration("WildernessPlayerAlarm", "customIgnores", updatedIgnores);
+  }
+
   @Override
   protected void startUp() {
     overlay.setLayer(config.flashLayer().getLayer());
@@ -194,9 +243,13 @@ public class WildernessPlayerAlarmPlugin extends Plugin {
   }
 
   @Override
-  protected void shutDown() throws Exception {
+  protected void shutDown() {
     if (overlayOn) {
       removeOverlay();
+    }
+
+    if (menuOptionAdded) {
+      updateMenuOption(false);
     }
   }
 
@@ -205,6 +258,10 @@ public class WildernessPlayerAlarmPlugin extends Plugin {
     if (event.getGroup().equals("WildernessPlayerAlarm")) {
       if ("timeoutToIgnore".equals(event.getKey()) && config.timeoutToIgnore() <= 0) {
         playerNameToTimeInRange.clear();
+      }
+
+      if("ignoreMenuEntry".equals(event.getKey()) && !config.ignoreMenuEntry()) {
+        updateMenuOption(false);
       }
 
       overlay.setLayer(config.flashLayer().getLayer());
